@@ -1,0 +1,182 @@
+syms E I q0 L x
+E = 210*10^9
+I = (1/12)*10^(-8)
+q0 = 100
+L = 0.1
+F = 40
+
+c.
+% n = 1
+displayFormula("q11 = int(q0*x, x, 0, L)")
+q11 = int(q0*x, x, 0, L)
+displayFormula("q12 = int((-q0/L)*x^2 + 2*q0*x^1, x, L, 2*L)")
+q12 = int((-q0/L)*x^2 + 2*q0*x^1, x, L, 2*L)
+
+q1 = q11 + q12
+F1 = q1 - 2*F*L - (7/6)*q0*L^2 + 2*F*L
+
+
+
+% n = 2
+displayFormula("q21 = int(q0*x^2, x, 0, L)")
+q21 = int(q0*x^2, x, 0, L)
+displayFormula("q22 = int((-q0/L)*x^3 + 2*q0*x^2, x, L, 2*L)")
+q22 = int((-q0/L)*x^3 + 2*q0*x^2, x, L, 2*L)
+
+q2 = q21 + q22
+F2 = q2 - F*(2*L)^2
+
+A = (E*I) * [0 0; 0 int(4, x, 0, 2*L)]
+B = [F1; F2]
+X = double(linsolve(A, B))
+
+
+
+% n = 3
+displayFormula("q31 = int(q0*x^3, x, 0, L)")
+q31 = int(q0*x^3, x, 0, L)
+displayFormula("q32 = int((-q0/L)*x^4 + 2*q0*x^3, x, L, 2*L)")
+q32 = int((-q0/L)*x^4 + 2*q0*x^3, x, L, 2*L)
+
+q3 = q31 + q32
+F3 = q3 - F*(2*L)^3
+
+A = (E*I) * [int(4, x, 0, 2*L)      int(12*x, x, 0, 2*L);
+             int(12*x, x, 0, 2*L)   int(36*x^2, x, 0, 2*L)]
+B = [F2; F3]
+X = double(linsolve(A,B))
+
+
+
+% n = 4
+displayFormula("q41 = int(q0*x^4, x, 0, L)")
+q41 = int(q0*x^4, x, 0, L)
+displayFormula("q42 = int((-q0/L)*x^5 + 2*q0*x^4, x, L, 2*L)")
+q42 = int((-q0/L)*x^5 + 2*q0*x^4, x, L, 2*L)
+
+q4 = q41 + q42
+F4 = q4 - F*(2*L)^4
+
+A = (E*I) * [int(4, x, 0, 2*L)      int(12*x, x, 0, 2*L)    int(24*x^2, x, 0, 2*L);
+             int(12*x, x, 0, 2*L)   int(36*x^2, x, 0, 2*L)  int(72*x^3, x, 0, 2*L);
+             int(24*x^2, x, 0, 2*L) int(72*x^3, x, 0, 2*L)  int(144*x^4, x, 0, 2*L)]
+B = [F2; F3; F4]
+X = double(linsolve(A,B))
+
+
+
+% n = 5
+displayFormula("q51 = int(q0*x^5, x, 0, L)")
+q51 = int(q0*x^5, x, 0, L)
+displayFormula("q52 = int((-q0/L)*x^6 + 2*q0*x^5, x, L, 2*L)")
+q52 = int((-q0/L)*x^6 + 2*q0*x^5, x, L, 2*L)
+
+q5 = q51 + q52
+F5 = q5 - F*(2*L)^5
+
+A = (E*I) * [int(4, x, 0, 2*L)      int(12*x, x, 0, 2*L)     int(24*x^2, x, 0, 2*L)  int(40*x^3, x, 0, 2*L);
+             int(12*x, x, 0, 2*L)   int(36*x^2, x, 0, 2*L)   int(72*x^3, x, 0, 2*L)  int(120*x^4, x, 0, 2*L);
+             int(24*x^2, x, 0, 2*L) int(72*x^3, x, 0, 2*L)   int(144*x^4, x, 0, 2*L) int(240*x^5, x, 0, 2*L);
+             int(40*x^3, x, 0, 2*L) int(120*x^4, x, 0, 2*L)  int(240*x^5, x, 0, 2*L) int(400*x^6, x, 0, 2*L)]
+B = [F2; F3; F4; F5]
+X = double(linsolve(A,B))
+
+
+
+% plotting
+fplot((-0.0105)*x^2, [0, 0.2])
+hold on
+fplot((-0.0204)*x^2 + (0.0329)*x^3, [0, 0.2])
+fplot((-0.0196)*x^2 + (0.0248)*x^3 + (0.0201)*x^4, [0, 0.2])
+fplot((-0.0195)*x^2 + (0.0229)*x^3 + (0.0320)*x^4 + (-0.0238)*x^5, [0, 0.2])
+hold off
+
+xlabel('x')
+ylabel('w(x)')
+legend('n=2', 'n=3', 'n=4', 'n=5')
+
+
+
+
+% checking derivative
+diff(diff(x^2))*diff(diff(x^2))
+diff(diff(x^2))*diff(diff(x^3))
+diff(diff(x^2))*diff(diff(x^4))
+diff(diff(x^2))*diff(diff(x^5))
+
+diff(diff(x^3))*diff(diff(x^2))
+diff(diff(x^3))*diff(diff(x^3))
+diff(diff(x^3))*diff(diff(x^4))
+diff(diff(x^3))*diff(diff(x^5))
+
+diff(diff(x^4))*diff(diff(x^2))
+diff(diff(x^4))*diff(diff(x^3))
+diff(diff(x^4))*diff(diff(x^4))
+diff(diff(x^4))*diff(diff(x^5))
+
+diff(diff(x^5))*diff(diff(x^2))
+diff(diff(x^5))*diff(diff(x^3))
+diff(diff(x^5))*diff(diff(x^4))
+diff(diff(x^5))*diff(diff(x^5))
+
+d.
+% n = 2
+syms a1 a2 u_h
+u_h = a1*x + a2*x^2
+I2 = 0.5*E*I*int(diff(diff(u_h))^2, x, 0, 2*L) - int(u_h*q0, x, 0, L) - int(u_h*((-q0/L)*x+2*q0), x, L, 2*L) + F*(a1*2*L+a2*((2*L)^2))
+diff(I2, a2)
+
+% n = 3
+syms a1 a2 a3 u_h
+u_h = a1*x + a2*x^2 + a3*x^3
+I3 = 0.5*E*I*int(diff(diff(u_h))^2, x, 0, 2*L) - int(u_h*q0, x, 0, L) - int(u_h*((-q0/L)*x+2*q0), x, L, 2*L) + F*(a1*2*L + a2*((2*L)^2) + a3*((2*L)^3))
+diff(I3, a2)
+diff(I3, a3)
+
+A = [140 42; 42 84/5]
+B = [-59/40; -609/2000]
+X = double(linsolve(A,B))
+
+% n = 4
+syms a1 a2 a3 a4 u_h
+u_h = a1*x + a2*x^2 + a3*x^3 + a4*x^4
+I4 = 0.5*E*I*int(diff(diff(u_h))^2, x, 0, 2*L) - int(u_h*q0, x, 0, L) - int(u_h*((-q0/L)*x+2*q0), x, L, 2*L) + F*(a1*2*L + a2*((2*L)^2) + a3*((2*L)^3) + a4*((2*L)^4))
+diff(I4, a2)
+diff(I4, a3)
+diff(I4, a4)
+
+A = [140 42 56/5; 42 84/5 126/25; 56/5 126/25 1008/625]
+B = [-59/40; -609/2000; -619/10000]
+X = double(linsolve(A,B))
+
+% n = 5
+syms a1 a2 a3 a4 a5 u_h
+u_h = a1*x + a2*x^2 + a3*x^3 + a4*x^4 + a5*x^5
+I5 = 0.5*E*I*int(diff(diff(u_h))^2, x, 0, 2*L) - int(u_h*q0, x, 0, L) - int(u_h*((-q0/L)*x+2*q0), x, L, 2*L) + F*(a1*2*L + a2*((2*L)^2) + a3*((2*L)^3) + a4*((2*L)^4) + a5*((2*L)^5))
+diff(I5, a2)
+diff(I5, a3)
+diff(I5, a4)
+diff(I5, a5)
+
+A = [140 42 56/5 14/5; 42 84/5 126/25 168/125; 56/5 126/25 1008/625 56/125; 14/5 168/125 56/125 16/125]
+B = [-59/40; -609/2000; -619/10000; -5249/420000]
+X = double(linsolve(A,B))
+
+f.
+syms u2 u3 u4 u5
+u2 = -0.0105*x^2
+u3 = -0.0204*x^2 + 0.0329*x^3
+u4 = -0.0196*x^2 + 0.0248*x^3 + 0.0201*x^4
+u5 = -0.0195*x^2 + 0.0229*x^3 + 0.0320*x^4 - 0.0238*x^5
+
+% n=2
+u25 = u2 - u5
+I25 = double(0.5*E*I*int(diff(diff(u25))^2, x, 0, 2*L) - int(u25*q0, x, 0, L) - int(u25*((-q0/L)*x+2*q0), x, L, 2*L) + F*((-0.0105*(2*L)^2) - (-0.0195*(2*L)^2 + 0.0229*(2*L)^3 + 0.0320*(2*L)^4 - 0.0238*(2*L)^5)))
+
+% n=3
+u35 = u3 - u5
+I35 = double(0.5*E*I*int(diff(diff(u35))^2, x, 0, 2*L) - int(u35*q0, x, 0, L) - int(u35*((-q0/L)*x+2*q0), x, L, 2*L) + F*((-0.0204*(2*L)^2 + 0.0329*(2*L)^3) - (-0.0195*(2*L)^2 + 0.0229*(2*L)^3 + 0.0320*(2*L)^4 - 0.0238*(2*L)^5)))
+
+% n=4
+u45 = u4 - u5
+I45 = double(0.5*E*I*int(diff(diff(u45))^2, x, 0, 2*L) - int(u45*q0, x, 0, L) - int(u45*((-q0/L)*x+2*q0), x, L, 2*L) + F*((-0.0196*(2*L)^2 + 0.0248*(2*L)^3 + 0.0201*(2*L)^4) - (-0.0195*(2*L)^2 + 0.0229*(2*L)^3 + 0.0320*(2*L)^4 - 0.0238*(2*L)^5)))
